@@ -1,1 +1,21 @@
-package here ljkjh
+---
+title: "Training Model"
+author: "Russell Marvin"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = FALSE)
+```
+
+```{r}
+#USEFUL LINK(S): http://www.sthda.com/english/articles/40-regression-analysis/165-linear-regression-essentials-in-r/ 
+library(broom)
+#creating linear model to predict price by bed,bath,acre_lot&house_size
+linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data = TRAINING_DATA)
+#quick summary of our model
+summary(linear_model_fit)
+#using tidy() to create a tibble of coefficients to use for neural network weights later
+weights_table <- tidy(linear_model_fit)
+
+```

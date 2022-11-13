@@ -1,4 +1,5 @@
 ```{r}
+#Taking in the user Inputs
 {
     bed = as.integer(readline("Enter bed : "));
     bath = as.integer(readline("Enter bath : "));
@@ -7,10 +8,13 @@
     state = as.integer(readline("Enter State : "));
 }
 
+#Putting inputs ina a dataframe
 user_data = data.frame(bed, bath, acre_lot, house_size, state)
 ```
 
 ```{r}
+#function that takes in user data and uses the mlr func to predict the price 
+
 predict_func <- function(user_data) {
   predict(linear_model_fit, user_data)
 }

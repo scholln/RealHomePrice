@@ -1,0 +1,18 @@
+```{r}
+{
+    bed = as.integer(readline("Enter bed : "));
+    bath = as.integer(readline("Enter bath : "));
+    acre_lot = as.integer(readline("Enter acre_lot : "));
+    house_size = as.integer(readline("Enter house_size : "));
+    state = as.integer(readline("Enter State : "));
+}
+
+user_data = data.frame(bed, bath, acre_lot, house_size, state)
+```
+
+```{r}
+predict_func <- function(user_data) {
+  predict(linear_model_fit, user_data)
+}
+```
+

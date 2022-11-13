@@ -1,0 +1,56 @@
+---
+title: "Normalize and Split"
+author: "Nicholas Scholl"
+date: "11/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r library load}
+library(SingleR)
+library(dplyr)
+library(SeuratObject)
+library(Seurat)
+library(singlet)
+library(dplyr)
+library(ggplot2)
+library(RcppML)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r normalization}
+LogNormalize("Moreen's_data$bed")
+LogNormalize("Moreen's_data$bath")
+LogNormalize("Moreen's_data$Sqfoot")
+LogNormalize("Moreen's_data$Acrs_lot")
+LogNormalize("Moreen's_data$price")
+
+
+view("Moreen's_data")
+
+
+
+```
+
+```{r splitting the data}
+
+set.seed(37645)
+Seperator <- rbinom(nrow("Moreen's_data"), 1, 0.25)
+"Test_data" <- "Moreen's_data"[Seperator == 1]
+
+"Moreen's data"
+
+```
+

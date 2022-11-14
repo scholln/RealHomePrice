@@ -1,0 +1,53 @@
+---
+title: "Untitled"
+output: html_document
+date: "2022-11-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r loading packages}
+library(tidyverse)
+```
+```{r}
+realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
+```
+
+```{r selecting required columns}
+realtor_data1 <- realtor_data %>%
+  select(c('price','bed','bath','acre_lot','house_size'))
+
+realtor_data1
+```
+
+```{r  removing rows with null values}
+
+cleaned_realtordata <- na.omit(realtor_data1)
+
+cleaned_realtordata
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

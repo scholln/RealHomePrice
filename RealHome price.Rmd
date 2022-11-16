@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "RealHomePrice"
 output: html_document
 date: "2022-11-12"
 ---
@@ -10,11 +10,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
+```{r}
+install.packages("caTools")
+```
+
+
 ```{r loading packages}
-library(tidyverse)
+library(SingleR)
+library(dplyr)
+library(SeuratObject)
+library(Seurat)
+library(singlet)
+library(dplyr)
+library(ggplot2)
+library(RcppML)
+library(broom)
+library(caTools)
 ```
 ```{r}
-realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
+realtor_data <- read_csv("realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -32,22 +46,63 @@ cleaned_realtordata
 ```
 
 
+```{r Normalization and Splitting data}
+
+min <- apply(cleaned_realtordata, 2, min)
+max <- apply(cleaned_realtordata, 2, max)
+Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+
+set.seed(12)
+sample <- sample.split(Scaled_data$price, SplitRatio = 0.8)
+train_data <- subset(Scaled_data, sample == TRUE)
+test_data <- subset(Scaled_data, sample == FALSE)
 
 
 
 
-
-
-
-
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+```{r Getting Linear model setup}
+
+
+linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data = train_data)
+#quick summary of our model
+summary(linear_model_fit)
+#using tidy() to create a tibble of coefficients to use for neural network weights later
+weights_table <- tidy(linear_model_fit)
+
+```
+
+
+
+
+
+```{r User input}
+{
+    bed = as.integer(readline("Enter bed : "));
+    bath = as.integer(readline("Enter bath : "));
+    acre_lot = as.integer(readline("Enter acre_lot : "));
+    house_size = as.integer(readline("Enter house_size: "));
+}
+
+user_data = data.frame(bed, bath, acre_lot, house_size)
+
+```
+
+```{r Using a function}
+
+predict_func <- function(user_data) {
+  predict(linear_model_fit, user_data)
+}
+
+```
+
+```{r}
+predict_func(user_data)
+```
+
+
+

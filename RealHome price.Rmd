@@ -1,7 +1,7 @@
 ---
 title: "RealHomePrice"
 output: html_document
-date: "2022-11-12"
+date: "2022-11-21"
 ---
 
 ```{r setup, include=FALSE}
@@ -28,7 +28,7 @@ library(broom)
 library(caTools)
 ```
 ```{r}
-realtor_data <- read_csv("realtor-data.csv")
+realtor_data <- read.csv("realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -42,7 +42,9 @@ realtor_data1
 
 cleaned_realtordata <- na.omit(realtor_data1)
 
-cleaned_realtordata
+
+
+index <- sample(1:nrow(cleaned_realtordata), round(0.75*nrow(cleaned_realtordata)))
 ```
 
 
@@ -50,12 +52,11 @@ cleaned_realtordata
 
 min <- apply(cleaned_realtordata, 2, min)
 max <- apply(cleaned_realtordata, 2, max)
-Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+Scaled_data <- as.data.frame(scale(user_data, center = min, scale = max - min))
 
-set.seed(12)
-sample <- sample.split(Scaled_data$price, SplitRatio = 0.8)
-train_data <- subset(Scaled_data, sample == TRUE)
-test_data <- subset(Scaled_data, sample == FALSE)
+train_data_lm <- Scaled_data[index,]
+test_data_lm <- Scaled_data[-index,]
+
 
 
 
@@ -68,7 +69,7 @@ test_data <- subset(Scaled_data, sample == FALSE)
 ```{r Getting Linear model setup}
 
 
-linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data = train_data)
+linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data = train_data_lm)
 #quick summary of our model
 summary(linear_model_fit)
 #using tidy() to create a tibble of coefficients to use for neural network weights later
@@ -84,13 +85,25 @@ weights_table <- tidy(linear_model_fit)
 {
     bed = as.integer(readline("Enter bed : "));
     bath = as.integer(readline("Enter bath : "));
-    acre_lot = as.integer(readline("Enter acre_lot : "));
+    acre_lot = as.numeric(readline("Enter acre_lot : "));
     house_size = as.integer(readline("Enter house_size: "));
 }
 
 user_data = data.frame(bed, bath, acre_lot, house_size)
 
 ```
+
+
+```{r}
+min <- apply(user_data, 2, min)
+max <- apply(user_data, 2, max)
+Scaled_user_data <- as.data.frame(scale(user_data, center = min, scale = max - min))
+
+
+
+
+```
+
 
 ```{r Using a function}
 
@@ -105,4 +118,44 @@ predict_func(user_data)
 ```
 
 
+```{r Install neural net package and setup}
+
+install.packages("neuralnet")
+
+```
+
+
+```{r Library Neural net}
+
+library(neuralnet)
+
+
+nn <- neuralnet::neuralnet(linear_model_fit, data = train_data, linear.output = TRUE)
+
+
+
+```
+
+```{r Looking at our work}
+
+plot(nn)
+
+```
+
+```{r Using the nerual net}
+
+
+pr.nn <- compute(nn,test_data[,1:5])
+pr.nn_ <- pr.nn$net.result*(max(test_data$price)-min(test_data$price))+min(test_data$price)
+test.r <- (test_data$price)*(max(test_data$price)-min(test_data$price))+min(test_data$price)
+MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_data)
+
+```
+
+
+```{r}
+
+compute(pr.nn_, user_data)
+
+```
 

@@ -1,34 +1,36 @@
 ---
-title: "RealHomePrice"
+title: "Untitled"
 output: html_document
-date: "2022-11-21"
+date: "2022-11-22"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
 ```{r}
 install.packages("caTools")
+install.packages('neuralnet')
+install.packages('sigmoid')
 ```
 
 
 ```{r loading packages}
-library(SingleR)
-library(dplyr)
-library(SeuratObject)
-library(Seurat)
-library(singlet)
+
+library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(RcppML)
+library(neuralnet)
+library(sigmoid)
 library(broom)
 library(caTools)
 ```
+
+## R Markdown
+
+
 ```{r}
-realtor_data <- read.csv("realtor-data.csv")
+realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -42,120 +44,181 @@ realtor_data1
 
 cleaned_realtordata <- na.omit(realtor_data1)
 
-
-
-index <- sample(1:nrow(cleaned_realtordata), round(0.75*nrow(cleaned_realtordata)))
+cleaned_realtordata
 ```
+
 
 
 ```{r Normalization and Splitting data}
 
-min <- apply(cleaned_realtordata, 2, min)
-max <- apply(cleaned_realtordata, 2, max)
-Scaled_data <- as.data.frame(scale(user_data, center = min, scale = max - min))
+normalize <- function(x, na.rm = TRUE) {
+    return((x- min(x)) /(max(x)-min(x)))
+}
 
-train_data_lm <- Scaled_data[index,]
-test_data_lm <- Scaled_data[-index,]
+normalized_data = as.data.frame(lapply(cleaned_realtordata, normalize))
 
+normalize2 <- function(x, na.rm = TRUE) {
+    return((x- min(x)) / max(x))
+}
 
+normalized_data2 = as.data.frame(lapply(cleaned_realtordata, normalize2))
 
-
-
+#min <- apply(cleaned_realtordata, 2, -min/max)
+#max <- apply(cleaned_realtordata, 2, max)
+#Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+set.seed(12)
+sample <- sample.split(normalized_data2$price, SplitRatio = 0.8)
+train_data <- subset(normalized_data2, sample == TRUE)
+test_data <- subset(normalized_data2, sample == FALSE)
 ```
 
 
 
 
 ```{r Getting Linear model setup}
-
-
-linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data = train_data_lm)
+linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data =train_data )
 #quick summary of our model
 summary(linear_model_fit)
 #using tidy() to create a tibble of coefficients to use for neural network weights later
-weights_table <- tidy(linear_model_fit)
-
+#weights_table <- tidy(linear_model_fit)
+#user_data = data.frame(bed, bath, acre_lot, house_size)
 ```
-
-
-
 
 
 ```{r User input}
 {
-    bed = as.integer(readline("Enter bed : "));
-    bath = as.integer(readline("Enter bath : "));
-    acre_lot = as.numeric(readline("Enter acre_lot : "));
-    house_size = as.integer(readline("Enter house_size: "));
+    bed2 = as.numeric(readline("Enter bed : "));
+    bath2 = as.numeric(readline("Enter bath : "));
+    acre_lot2 = as.numeric(readline("Enter acre_lot : "));
+    house_size2 = as.numeric(readline("Enter house_size: "));
+    price8 = as.numeric(readline("Enter price: "));
 }
+# using (-min/max-min)
+
+bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed)-min(cleaned_realtordata$bed))
+
+bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath)-min(cleaned_realtordata$bath))
+
+acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot)-min(cleaned_realtordata$acre_lot))
+
+house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size)-min(cleaned_realtordata$house_size))
+
+price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))
+
+
+
+#   using (- min/max)
+bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))
+
+bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath))
+
+acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot))
+
+house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size))
+
+price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price))
+
 
 user_data = data.frame(bed, bath, acre_lot, house_size)
 
 ```
 
 
-```{r}
-min <- apply(user_data, 2, min)
-max <- apply(user_data, 2, max)
-Scaled_user_data <- as.data.frame(scale(user_data, center = min, scale = max - min))
-
-
-
-
-```
-
-
 ```{r Using a function}
-
 predict_func <- function(user_data) {
   predict(linear_model_fit, user_data)
 }
+predict_func
 
 ```
 
 ```{r}
-predict_func(user_data)
+pricelm = predict_func(user_data)
+pricelm
 ```
 
 
-```{r Install neural net package and setup}
-
-install.packages("neuralnet")
-
+```{r}
+nn <- neuralnet(price~bed+bath+acre_lot+house_size,data=train_data,hidden=1, threshold=0.00001,linear.output=TRUE)
+            
 ```
 
-
-```{r Library Neural net}
-
-library(neuralnet)
-
-
-nn <- neuralnet::neuralnet(linear_model_fit, data = train_data, linear.output = TRUE)
-
-
-
-```
-
-```{r Looking at our work}
-
+```{r}
 plot(nn)
 
 ```
 
-```{r Using the nerual net}
 
-
-pr.nn <- compute(nn,test_data[,1:5])
-pr.nn_ <- pr.nn$net.result*(max(test_data$price)-min(test_data$price))+min(test_data$price)
-test.r <- (test_data$price)*(max(test_data$price)-min(test_data$price))+min(test_data$price)
-MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_data)
-
+```{r}
+#testy <- test_data2 %>%
+ # select(-c("price"))
 ```
+
 
 
 ```{r}
+price2 <- predict(nn,user_data)
 
-compute(pr.nn_, user_data)
+d <- price2[1]  
+d
+```
+
+```{r}
+unscaled_price1 <- d*(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+
+
+unscaled_price
+
+unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
 
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

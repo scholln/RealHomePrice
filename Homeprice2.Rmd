@@ -30,7 +30,7 @@ library(caTools)
 
 
 ```{r}
-realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
+realtor_data <- read_csv("realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -42,9 +42,13 @@ realtor_data1
 
 ```{r  removing rows with null values}
 
-cleaned_realtordata <- na.omit(realtor_data1)
+library(outliers)
+#removing null values and outliers with na.omit and rm.outlier
+cleaned_realtordata1 <- na.omit(realtor_data1) 
+cleaned_realtordata2 <- sapply(cleaned_realtordata1, rm.outlier, fill = TRUE) 
 
-cleaned_realtordata
+cleaned_realtordata <- cleaned_realtordata2 %>% data.frame() 
+
 ```
 
 
@@ -194,31 +198,3 @@ unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$pr
 
 
 
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-
-
-
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -94,7 +94,19 @@ summary(linear_model_fit)
     bath2 = as.numeric(readline("Enter bath : "));
     acre_lot2 = as.numeric(readline("Enter acre_lot : "));
     house_size2 = as.numeric(readline("Enter house_size: "));
+    price8 = as.numeric(readline("Enter price: "));
 }
+# using (-min/max-min)
+
+bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed)-min(cleaned_realtordata$bed))
+
+bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath)-min(cleaned_realtordata$bath))
+
+acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot)-min(cleaned_realtordata$acre_lot))
+
+house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size)-min(cleaned_realtordata$house_size))
+
+price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))
 
 
 
@@ -140,10 +152,6 @@ plot(nn)
 ```
 
 
-```{r}
-#testy <- test_data2 %>%
- # select(-c("price"))
-```
 
 
 
@@ -155,61 +163,7 @@ d
 ```
 
 ```{r}
-unscaled_price1 <- d*(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))+min(cleaned_realtordata$price)
-
-
-unscaled_price
 
 unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-
-
-
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

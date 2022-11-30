@@ -160,3 +160,11 @@ unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$pr
 usethis::use_testthat()
 ```
 
+
+```{r}
+library(devtools)
+library(usethis)
+
+devtools::check()
+```
+

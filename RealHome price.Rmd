@@ -30,7 +30,7 @@ library(caTools)
 
 
 ```{r}
-realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
+realtor_data <- read_csv("/Users/russellmarvin/Downloads/realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -126,9 +126,16 @@ predict_func
 ```
 
 ```{r}
-pricelm = predict_func(user_data)
+pricelm <- predict_func(user_data)
 pricelm
+
+#unscaling linear model price prediction
+unscaled_lm_price <- pricelm*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+unscaled_lm_price
+
 ```
+
+
 
 
 ```{r}

@@ -116,7 +116,6 @@ user_data = data.frame(bed, bath, house_size)
 
 ```
 
-
 ```{r Using a function}
 predict_func <- function(user_data) {
   predict(linear_model_fit, user_data)
@@ -160,7 +159,7 @@ d <- price2[1]
 d
 #unscaling price
 unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
-
+unscaled_price2
 ```
 
 ```{r}

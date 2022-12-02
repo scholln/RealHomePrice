@@ -35,7 +35,7 @@ realtor_data <- read_csv("realtor-data.csv")
 
 ```{r selecting required columns}
 realtor_data1 <- realtor_data %>%
-  select(c('price','bed','bath','acre_lot','house_size'))
+  select(c('price','bed','bath','house_size'))
 
 realtor_data1
 ```
@@ -56,9 +56,23 @@ filtered_realtor_data1= filtered_realtor_data[-which(filtered_realtor_data$price
 cleaned_realtordata <- filtered_realtor_data1
 ```
 
+```{r}
+filtered_realtor_data <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && house_size < 10000 )
+```
+
+```{r}
+outliers=boxplot(filtered_realtor_data$price,plot=FALSE)$out
+outliers_data=filtered_realtor_data[which(filtered_realtor_data$price %in% outliers),]
+filtered_realtor_data1= filtered_realtor_data[-which(filtered_realtor_data$price %in% outliers),]
+cleaned_realtordata <- filtered_realtor_data1
+```
+
 
 
 ```{r Normalization and Splitting data}
+
+
+
 
 normalize2 <- function(x, na.rm = TRUE) {
     return((x- min(x)) / max(x))
@@ -79,7 +93,7 @@ test_data <- subset(normalized_data2, sample == FALSE)
 
 
 ```{r Getting Linear model setup}
-linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data =train_data )
+linear_model_fit <- lm(price~bed+bath+house_size, data =train_data )
 #quick summary of our model
 summary(linear_model_fit)
 #using tidy() to create a tibble of coefficients to use for neural network weights later
@@ -92,7 +106,6 @@ summary(linear_model_fit)
 {
     bed2 = as.numeric(readline("Enter bed : "));
     bath2 = as.numeric(readline("Enter bath : "));
-    acre_lot2 = as.numeric(readline("Enter acre_lot : "));
     house_size2 = as.numeric(readline("Enter house_size: "));
     price8 = as.numeric(readline("Enter price: "));
 }
@@ -115,14 +128,12 @@ bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))
 
 bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath))
 
-acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot))
-
 house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size))
 
-price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price))
 
 
-user_data = data.frame(bed, bath, acre_lot, house_size)
+
+user_data = data.frame(bed, bath, house_size)
 
 ```
 
@@ -142,28 +153,31 @@ pricelm
 
 
 ```{r}
-nn <- neuralnet(price~bed+bath+acre_lot+house_size,data=train_data,hidden=1, threshold=0.00001,linear.output=TRUE)
+library(sigmoid)
+
+
+
+nn <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=2, threshold=0.001,act.fct=relu, rep=1, algorithm = "rprop+", linear.output=TRUE)
             
 ```
 
+
+
+
 ```{r}
+#plotting
 plot(nn)
-
-```
-
-
-
-
-
-```{r}
+#predicting price
 price2 <- predict(nn,user_data)
 
 d <- price2[1]  
 d
-```
-
-```{r}
-
+#unscaling price
 unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
 
 ```
+
+```{r}
+usethis::use_testthat()
+```
+

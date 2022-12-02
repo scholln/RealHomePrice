@@ -30,7 +30,7 @@ library(caTools)
 
 
 ```{r}
-realtor_data <- read_csv("realtor-data.csv")
+realtor_data <- read_csv("/Users/russellmarvin/Downloads/realtor-data.csv")
 ```
 
 ```{r selecting required columns}
@@ -137,7 +137,6 @@ user_data = data.frame(bed, bath, house_size)
 
 ```
 
-
 ```{r Using a function}
 predict_func <- function(user_data) {
   predict(linear_model_fit, user_data)
@@ -147,9 +146,16 @@ predict_func
 ```
 
 ```{r}
-pricelm = predict_func(user_data)
+pricelm <- predict_func(user_data)
 pricelm
+
+#unscaling linear model price prediction
+unscaled_lm_price <- pricelm*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+unscaled_lm_price
+
 ```
+
+
 
 
 ```{r}
@@ -174,10 +180,18 @@ d <- price2[1]
 d
 #unscaling price
 unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
-
+unscaled_price2
 ```
 
 ```{r}
 usethis::use_testthat()
+```
+
+
+```{r}
+library(devtools)
+library(usethis)
+
+devtools::check()
 ```
 

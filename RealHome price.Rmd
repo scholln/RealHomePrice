@@ -64,9 +64,7 @@ normalize2 <- function(x, na.rm = TRUE) {
 
 normalized_data2 = as.data.frame(lapply(cleaned_realtordata, normalize2))
 
-#min <- apply(cleaned_realtordata, 2, -min/max)
-#max <- apply(cleaned_realtordata, 2, max)
-#Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+##Splitting Data
 
 set.seed(12)
 sample <- sample.split(normalized_data2$price, SplitRatio = 0.8) ## Splitting train and test data, train data = 80% of data 
@@ -116,9 +114,11 @@ nor_User_data <- normalize_input(user_data)
 ```{r Using a function}
 
 ##Function that takes in dataframe of normalized user data and gives out the output
-predict_func <- function(nor_User_data) {
+predict_lm <- function(nor_User_data) {
+  linear_model_fit <- readRDS("linear_model_fit.rds")
   predict(linear_model_fit, nor_User_data)
 }
+
 ```
 
 ```{r}
@@ -166,6 +166,15 @@ unscaled_price <- unscale_price(pricelm)
 ```
 
 ```{r}
+predict_nn <- function(nor_User_data) {
+  neural_net_fit <- readRDS("neural_net_fit.rds")
+  predict(neural_net_fit, nor_User_data)
+}
+
+```
+
+
+```{r}
 usethis::use_testthat()
 ```
 
@@ -182,4 +191,34 @@ saveRDS(linear_model_fit, file = "linear_model_fit.rds")
 saveRDS(nn, file = "nn.rds")
 ```
 
+
+
+```{r}
+predict_Price <- function(user_data) {
+  nor_User_data <- normalize_input(user_data)
+  lm_price <- predict_lm(nor_User_data)
+  nn_price <- predict_nn((nor_User_data))
+  lm_price <- unscale_price(lm_price)
+  nn_price <- unscale_price(nn_price)
+  prices <- data.frame(lm_price, nn_price)
+  return (prices)
+ 
+}
+
+```
+
+```{r FinalCode}
+
+{
+    bed = as.numeric(readline("Enter bed : "));
+    bath = as.numeric(readline("Enter bath : "));
+    house_size = as.numeric(readline("Enter house_size: "));
+}
+
+user_data = data.frame(bed, bath, house_size)
+
+
+predict_Price(user_data)
+
+```
 

@@ -35,7 +35,7 @@ library(caTools)
 
 ```{r selecting required columns}
 realtor_data1 <- realtor_data %>%
-  select(c('price','bed','bath','house_size'))
+  select(c('price','bed','bath','acre_lot','house_size'))
 
 realtor_data1
 ```
@@ -45,7 +45,7 @@ realtor_data1
 cleaned_realtordata <- na.omit(realtor_data1)
 
 ## manually filtering the ouliers
-filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && house_size < 10000 )
+filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && acre_lot > 0 && acre_lot < 5000 && house_size < 10000 )
 
 
 ## removing the price outliers 
@@ -119,65 +119,97 @@ nor_User_data <- normalize_input(user_data)
 predict_func <- function(nor_User_data) {
   predict(linear_model_fit, nor_User_data)
 }
+predict_func
+
 ```
 
 ```{r}
-unscale_price <- function(price) {
-  price*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
-}
-```
-
-```{r}
-pricelm <- predict_func(nor_User_data)
+pricelm = predict_func(user_data)
 pricelm
-
-#unscaling linear model price prediction
-unscaled_price <- unscale_price(pricelm)
-
-
-
 ```
 
 
-
-
 ```{r}
-library(sigmoid)
-
-
-
-nn <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE, stepmax=1e6)
+nn <- neuralnet(price~bed+bath+acre_lot+house_size,data=train_data,hidden=1, threshold=0.00001,linear.output=TRUE)
             
 ```
 
+```{r}
+plot(nn)
+
+```
+
+
+```{r}
+#testy <- test_data2 %>%
+ # select(-c("price"))
+```
 
 
 
 ```{r}
-#plotting
-plot(nn)
-#predicting price
-price2 <- predict(nn,nor_User_data)
+price2 <- predict(nn,user_data)
 
 d <- price2[1]  
 d
-#unscaling price
-unscaled_price <- unscale_price(pricelm)
 ```
 
 ```{r}
-usethis::use_testthat()
+unscaled_price1 <- d*(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+
+
+unscaled_price
+
+unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+
 ```
 
 
-```{r}
-library(devtools)
-library(usethis)
 
-devtools::check()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+
+```{r cars}
+summary(cars)
 ```
 
-```{r}
-saveRDS(linear_model_fit, file = "linear_model_fit.rds")
-saveRDS(nn, file = "nn.rds")
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
 ```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

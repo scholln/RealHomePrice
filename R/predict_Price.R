@@ -3,7 +3,10 @@
 #' @param x user data in a dataframe
 #' @returns a dataframe with predicted prices
 
-#' @examples  predict_Price(User_data)
+#' @examples
+#' example_user_data <- data.frame(c(3),c(2),c(1100))
+#' predict_Price(example_user_data)
+#' @export
 
 predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)

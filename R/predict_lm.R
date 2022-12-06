@@ -4,6 +4,7 @@
 #' @returns unscaled predicted price
 
 #' @examples predictedPrice <- perdict_lm(normalized_User_data)
+#' @export
 
 predict_lm <- function(nor_User_data) {
   linear_model_fit <- readRDS("linear_model_fit.rds")

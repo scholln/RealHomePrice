@@ -16,5 +16,6 @@ a dataframe with predicted prices
 Function that combines all the other functions for a human readable result
 }
 \examples{
- predict_Price(User_data)
+example_user_data <- data.frame(c(3),c(2),c(1100))
+predict_Price(example_user_data)
 }

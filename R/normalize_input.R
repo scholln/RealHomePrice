@@ -4,6 +4,7 @@
 #' @returns dataframe of normalized user input
 
 #' @examples nor_User_data <- normalize_input(user_data)
+#' @export
 
 
 normalize_input <- function(user_Data) {

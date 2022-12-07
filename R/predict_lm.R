@@ -7,6 +7,6 @@
 #' @export
 
 predict_lm <- function(nor_User_data) {
-  linear_model_fit <- readRDS("pricemodel.rds")
+  linear_model_fit <- load("pricemodel.R")
   predict(linear_model_fit, nor_User_data)
 }

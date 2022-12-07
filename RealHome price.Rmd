@@ -53,6 +53,9 @@ outliers=boxplot(filtered_realtor_data$price,plot=FALSE)$out
 outliers_data=filtered_realtor_data[which(filtered_realtor_data$price %in% outliers),]
 filtered_realtor_data1= filtered_realtor_data[-which(filtered_realtor_data$price %in% outliers),]
 
+set.seed(12)
+sample <- sample.split(normalized_data2$price, SplitRatio = 0.8)
+
 cleaned_realtordata <- filtered_realtor_data1
 ```
 
@@ -115,7 +118,7 @@ nor_User_data <- normalize_input(user_data)
 
 ##Function that takes in dataframe of normalized user data and gives out the output
 predict_lm <- function(nor_User_data) {
-  linear_model_fit <- readRDS("linear_model_fit.rds")
+  linear_model_fit <- read("linear_model_fit.R")
   predict(linear_model_fit, nor_User_data)
 }
 

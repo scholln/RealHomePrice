@@ -11,3 +11,4 @@
 #'bed, bath, house_size and price
 #'
 #'
+"cleaned_realtordata"

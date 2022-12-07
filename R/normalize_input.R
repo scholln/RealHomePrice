@@ -1,6 +1,6 @@
 #' Function that normalizes the userinput using -min/max
 #'
-#' @param x  user data in a dataframe
+#' @param x  user data in a dataframe, numeric values
 #' @returns dataframe of normalized user input
 #' @examples
 #' example_user_data <- data.frame(c(3),c(2),c(1100))

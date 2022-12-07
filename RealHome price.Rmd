@@ -34,15 +34,15 @@ library(caTools)
 ```
 
 ```{r selecting required columns}
-realtor_data1 <- realtor_data %>%
-  select(c('price','bed','bath','house_size'))
+#realtor_data1 <- realtor_data %>%
+  #select(c('price','bed','bath','house_size'))
 
-realtor_data1
+#realtor_data1
 ```
 
 ```{r  removing rows with null values}
 
-cleaned_realtordata <- na.omit(realtor_data1)
+#cleaned_realtordata <- na.omit(realtor_data1)
 
 ## manually filtering the ouliers
 filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && house_size < 10000 )
@@ -128,7 +128,7 @@ unscale_price <- function(price) {
 ```
 
 ```{r}
-pricelm <- predict_func(nor_User_data)
+pricelm <- predict_lm(nor_User_data)
 pricelm
 
 #unscaling linear model price prediction
@@ -167,7 +167,7 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 predict_nn <- function(nor_User_data) {
-  neural_net_fit <- readRDS("neural_net_fit.rds")
+  neural_net_fit <- readRDS("pricemodel.rds")
   predict(neural_net_fit, nor_User_data)
 }
 
@@ -221,4 +221,5 @@ user_data = data.frame(bed, bath, house_size)
 predict_Price(user_data)
 
 ```
+
 

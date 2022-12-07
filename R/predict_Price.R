@@ -8,8 +8,8 @@
 #' predict_Price(example_user_data)
 #' @export
 
-predict_Price <- function(user_data) {
-  nor_User_data <- normalize_input(user_data)
+predict_Price <- function(x) {
+  nor_User_data <- normalize_input(x)
   lm_price <- predict_lm(nor_User_data)
   nn_price <- predict_nn((nor_User_data))
   lm_price <- unscale_price(lm_price)

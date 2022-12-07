@@ -4,7 +4,7 @@
 \alias{predict_Price}
 \title{Function that combines all the other functions for a human readable result}
 \usage{
-predict_Price(user_data)
+predict_Price(x)
 }
 \arguments{
 \item{x}{user data in a dataframe}

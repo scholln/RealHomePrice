@@ -7,15 +7,11 @@
 normalize_input(x)
 }
 \arguments{
-\item{x}{user data in a dataframe}
+\item{x}{user data in a dataframe, numeric values}
 }
 \value{
 dataframe of normalized user input
 }
 \description{
 Function that normalizes the userinput using -min/max
-}
-\examples{
-example_user_data <- data.frame(c(3),c(2),c(1100))
-normalize_input(example_user_data)
 }

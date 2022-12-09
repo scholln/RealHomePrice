@@ -4,17 +4,14 @@
 \alias{predict_lm}
 \title{Function that predicts home price using linear model}
 \usage{
-predict_lm(nor_User_data)
+predict_lm(x)
 }
 \arguments{
-\item{x}{Normalized user data in a dataframe}
+\item{x}{Normalized user data in a dataframe, numeric values}
 }
 \value{
 unscaled predicted price
 }
 \description{
 Function that predicts home price using linear model
-}
-\examples{
-predictedPrice <- perdict_lm(normalized_User_data)
 }

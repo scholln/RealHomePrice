@@ -4,7 +4,7 @@
 \alias{unscale_price}
 \title{Function that unscales the predicted price}
 \usage{
-unscale_price(price)
+unscale_price(x)
 }
 \arguments{
 \item{x}{predicted price by the model}
@@ -14,7 +14,4 @@ unscaled prediction
 }
 \description{
 Function that unscales the predicted price
-}
-\examples{
-unscaled_price <- unscale_price(pricelm)
 }

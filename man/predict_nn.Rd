@@ -4,7 +4,7 @@
 \alias{predict_nn}
 \title{Function that predicts home price using neural net}
 \usage{
-predict_nn(nor_User_data)
+predict_nn(x)
 }
 \arguments{
 \item{x}{Normalized user data in a dataframe}
@@ -14,7 +14,4 @@ unscaled predicted price
 }
 \description{
 Function that predicts home price using neural net
-}
-\examples{
-predictedPrice <- predict_nn(normalized_User_data)
 }

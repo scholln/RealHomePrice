@@ -14,7 +14,18 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+install.packages("RealHomePrice")
+devtools::document()
 library(RealHomePrice)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(neuralnet)
+library(sigmoid)
+library(broom)
+library(caTools)
+library(devtools)
+library(usethis)
 ```
 
 
@@ -90,7 +101,8 @@ The predict_lm function reads in the  the linear model RDS that comes with the p
 
 ```{r}
 predict_lm <- function(nor_User_data) {
-  linear_model_fit <- readRDS("linear_model_fit.rds")
+  if (class(linear_model_fit) != "lm"
+  ) stop("This function needs an LM model")
   predict(linear_model_fit, nor_User_data)
 }
 
@@ -117,8 +129,8 @@ lm_price
 *predict_nn function*
 
 ```{r}
-predict_nn <- function(nor_User_data) {
-  neural_net_fit <- readRDS("pricemodel.rds")
+PriceModel <- function(nor_User_data) {
+   neural_net_fit <- load("pricemodel.rdata")
   predict(neural_net_fit, nor_User_data)
 }
 ```
@@ -134,7 +146,7 @@ returns the unscaled predicted house prices for both the linear model and neural
 predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)
   lm_price <- predict_lm(nor_User_data)
-  nn_price <- predict_nn((nor_User_data))
+  nn_price <- PriceModel((nor_User_data))
   lm_price <- unscale_price(lm_price)
   nn_price <- unscale_price(nn_price)
   prices <- data.frame(lm_price, nn_price)
@@ -146,11 +158,7 @@ predict_Price <- function(user_data) {
 The predict_price function in use as shown below:
 
 ```{r}
-{
-    bed = as.numeric(readline("Enter bed : "));
-    bath = as.numeric(readline("Enter bath : "));
-    house_size = as.numeric(readline("Enter house_size: "));
-}
+
 user_data = data.frame(bed, bath, house_size)
 predict_Price(user_data)
 ```
@@ -159,9 +167,9 @@ predict_Price(user_data)
 The neuralnetwork model can be plotted by reading in the RDS containing the model and using the plot function to plot the model
 
 ```{r}
-neural_net_fit <- readRDS("pricemodel.rds")
-plot(neural_net_fit)
 
+#plotpoint <- load("PriceModel.rdata")
+#plot(plotpoint)
 ```
 
 *plotting the models predicted prices vs actual prices obtained from running  test data through the neural network model*

@@ -47,9 +47,7 @@ filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed <
 outliers=boxplot(filtered_realtor_data$price,plot=FALSE)$out
 outliers_data=filtered_realtor_data[which(filtered_realtor_data$price %in% outliers),]
 filtered_realtor_data1= filtered_realtor_data[-which(filtered_realtor_data$price %in% outliers),]
-set.seed(12)
-sample <- sample.split(normalized_data2$price, SplitRatio = 0.8)
-cleaned_realtordata <- filtered_realtor_data1
+
 ```
 
 ```{r Normalization and Splitting data}
@@ -104,7 +102,7 @@ nor_User_data <- normalize_input(user_data)
 
 ```{r Using a function}
 ##Function that takes in dataframe of normalized user data and gives out the output
-predict_lm <- function(nor_User_data, linear_model_fit) {
+predict_lm <- function(nor_User_data, linear_model_fit1 = linear_model_fit) {
   if (class(linear_model_fit) != "lm"
   ) stop("This function needs an LM model")
   predict(linear_model_fit, nor_User_data)
@@ -129,7 +127,7 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 
-nn <- neuralnet(price~bed+bath+house_size,data=test_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE)
+PriceModel <- neuralnet(price~bed+bath+house_size,data=test_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE)
             
 ```
 
@@ -138,7 +136,7 @@ nn <- neuralnet(price~bed+bath+house_size,data=test_data,hidden=1, threshold=0.0
 
 ```{r}
 #plotting
-plot(nn)
+plot(PriceModel)
 #predicting price
 price2 <- predict(nn,nor_User_data)
 d <- price2[1]  
@@ -148,9 +146,9 @@ unscaled_price <- unscale_price(pricelm)
 ```
 
 ```{r}
-predict_nn <- function(nor_User_data) {
-  neural_net_fit <- read("pricemodel.R")
-  predict(neural_net_fit, nor_User_data)
+PriceModel1 <- function(nor_User_data) {
+  load("Price_Model.Rdata")
+  compute(Price_Model.Rdata, nor_User_data)
 }
 ```
 
@@ -162,11 +160,12 @@ predict_nn <- function(nor_User_data) {
 predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)
   lm_price <- predict_lm(nor_User_data)
-  nn_price <- predict_nn((nor_User_data))
+  nn_price <- PriceModel1(nor_User_data)
   lm_price <- unscale_price(lm_price)
   nn_price <- unscale_price(nn_price)
-  prices <- data.frame(lm_price, nn_price)
-  return (prices)
+  
+  prices <- list("lm_price" = lm_price, "nn_price" = nn_price)
+  return(prices)
  
 }
 ```
@@ -176,7 +175,17 @@ predict_Price <- function(user_data) {
     bed = as.numeric(readline("Enter bed : "));
     bath = as.numeric(readline("Enter bath : "));
     house_size = as.numeric(readline("Enter house_size: "));
+    user_data = data.frame(bed, bath, house_size)
 }
-user_data = data.frame(bed, bath, house_size)
-predict_Price(user_data)
+
+predict_price(user_data)
 ```
+
+
+
+```{r}
+
+predict_Price(user_data)
+
+```
+

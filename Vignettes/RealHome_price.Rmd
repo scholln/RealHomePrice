@@ -8,9 +8,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-install.packages("caTools")
-install.packages('neuralnet')
-install.packages('sigmoid')
+#install.packages("caTools")
+#install.packages('neuralnet')
+#install.packages('sigmoid')
 ```
 
 
@@ -30,7 +30,7 @@ library(usethis)
 
 
 ```{r} 
-realtor_data <- load("RealHomePrice/Data/cleaned_realtordata.rdata")
+load("C:/RealHomePrice/data/cleaned_realtordata.rdata")
 ```
 
 ```{r selecting required columns}
@@ -40,7 +40,7 @@ realtor_data <- load("RealHomePrice/Data/cleaned_realtordata.rdata")
 ```
 
 ```{r  removing rows with null values}
-cleaned_realtordata <- na.omit(realtor_data1)
+#cleaned_realtordata <- na.omit(realtor_data1)
 ## manually filtering the ouliers
 filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && house_size < 10000 )
 ## removing the price outliers 
@@ -127,7 +127,7 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 
-PriceModel <- neuralnet(price~bed+bath+house_size,data=test_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE)
+PriceModel <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE)
             
 ```
 
@@ -147,8 +147,8 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 PriceModel1 <- function(nor_User_data) {
-  load("Price_Model.Rdata")
-  compute(Price_Model.Rdata, nor_User_data)
+  neural_net_fit
+  predict(neural_net_fit, nor_User_data)
 }
 ```
 
@@ -161,10 +161,10 @@ predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)
   lm_price <- predict_lm(nor_User_data)
   nn_price <- PriceModel1(nor_User_data)
-  lm_price <- unscale_price(lm_price)
-  nn_price <- unscale_price(nn_price)
+  lm_pricefinal <- unscale_price(lm_price)
+  nn_pricefinal <- unscale_price(nn_price)
   
-  prices <- list("lm_price" = lm_price, "nn_price" = nn_price)
+  prices <- data.frame(nn_pricefinal, lm_pricefinal)
   return(prices)
  
 }
@@ -178,7 +178,7 @@ predict_Price <- function(user_data) {
     user_data = data.frame(bed, bath, house_size)
 }
 
-predict_price(user_data)
+predict_Price(user_data)
 ```
 
 

@@ -130,7 +130,7 @@ lm_price
 
 ```{r}
 PriceModel <- function(nor_User_data) {
-   neural_net_fit <- load("pricemodel.rdata")
+   
   predict(neural_net_fit, nor_User_data)
 }
 ```

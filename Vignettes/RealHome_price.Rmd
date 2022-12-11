@@ -127,7 +127,7 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 
-PriceModel <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=1, threshold=0.00001,act.fct=relu, rep=1, linear.output=TRUE)
+PriceModel <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=2, threshold=0.01,act.fct=relu, rep=1, linear.output=TRUE)
             
 ```
 

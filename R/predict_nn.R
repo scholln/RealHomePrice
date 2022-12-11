@@ -6,6 +6,6 @@
 #' @export
 
 predict_nn <- function(x) {
-
+  neural_net_fit
   predict(neural_net_fit, x)
 }

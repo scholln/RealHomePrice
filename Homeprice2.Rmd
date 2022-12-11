@@ -8,15 +8,21 @@ date: "2022-11-22"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
+
+
+
+## R Markdown
+
 ```{r}
-install.packages("caTools")
-install.packages('neuralnet')
-install.packages('sigmoid')
+#install.packages("caTools")
+#install.packages('neuralnet')
+#install.packages('sigmoid')
 ```
 
 
 ```{r loading packages}
-
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -24,59 +30,51 @@ library(neuralnet)
 library(sigmoid)
 library(broom)
 library(caTools)
+library(devtools)
+library(usethis)
 ```
 
 ## R Markdown
 
 
-```{r}
-realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
+```{r} 
+realtor_data <- read_csv("realtor-data.csv")
 ```
 
 ```{r selecting required columns}
 realtor_data1 <- realtor_data %>%
-  select(c('price','bed','bath','acre_lot','house_size'))
-
+  select(c('price','bed','bath','house_size'))
 realtor_data1
 ```
 
 ```{r  removing rows with null values}
-
 cleaned_realtordata <- na.omit(realtor_data1)
-
-cleaned_realtordata
+# manually filtering the ouliers
+filtered_realtor_data  <- cleaned_realtordata |> filter(price < 1000000 && bed < 15 && bath < 9 && house_size < 10000 )
+## removing the price outliers 
+outliers=boxplot(filtered_realtor_data$price,plot=FALSE)$out
+outliers_data=filtered_realtor_data[which(filtered_realtor_data$price %in% outliers),]
+filtered_realtor_data1= filtered_realtor_data[-which(filtered_realtor_data$price %in% outliers),]
 ```
 
-
-
 ```{r Normalization and Splitting data}
-
-normalize <- function(x, na.rm = TRUE) {
-    return((x- min(x)) /(max(x)-min(x)))
-}
-
-normalized_data = as.data.frame(lapply(cleaned_realtordata, normalize))
-
 normalize2 <- function(x, na.rm = TRUE) {
     return((x- min(x)) / max(x))
 }
-
 normalized_data2 = as.data.frame(lapply(cleaned_realtordata, normalize2))
-
-#min <- apply(cleaned_realtordata, 2, -min/max)
-#max <- apply(cleaned_realtordata, 2, max)
-#Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+normalized_data3 <- normalized_data2[1:100000, ]
+##Splitting Data
 set.seed(12)
-sample <- sample.split(normalized_data2$price, SplitRatio = 0.8)
-train_data <- subset(normalized_data2, sample == TRUE)
-test_data <- subset(normalized_data2, sample == FALSE)
+sample <- sample.split(normalized_data3$price, SplitRatio = 0.8) ## Splitting train and test data, train data = 80% of data 
+train_data <- subset(normalized_data3, sample == TRUE)
+test_data <- subset(normalized_data3, sample == FALSE)
 ```
 
 
 
 
 ```{r Getting Linear model setup}
-linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data =train_data )
+linear_model_fit <- lm(price~bed+bath+house_size, data =train_data )
 #quick summary of our model
 summary(linear_model_fit)
 #using tidy() to create a tibble of coefficients to use for neural network weights later
@@ -85,140 +83,160 @@ summary(linear_model_fit)
 ```
 
 
+
+
 ```{r User input}
 {
-    bed2 = as.numeric(readline("Enter bed : "));
-    bath2 = as.numeric(readline("Enter bath : "));
-    acre_lot2 = as.numeric(readline("Enter acre_lot : "));
-    house_size2 = as.numeric(readline("Enter house_size: "));
-    price8 = as.numeric(readline("Enter price: "));
+    bed = as.numeric(readline("Enter bed : "));
+    bath = as.numeric(readline("Enter bath : "));
+    house_size = as.numeric(readline("Enter house_size: "));
 }
-# using (-min/max-min)
-
-bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed)-min(cleaned_realtordata$bed))
-
-bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath)-min(cleaned_realtordata$bath))
-
-acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot)-min(cleaned_realtordata$acre_lot))
-
-house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size)-min(cleaned_realtordata$house_size))
-
-price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))
-
-
-
-#   using (- min/max)
-bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))
-
-bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath))
-
-acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot))
-
-house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size))
-
-price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price))
-
-
-user_data = data.frame(bed, bath, acre_lot, house_size)
-
+user_data = data.frame(bed, bath, house_size)
+#   Function to Normalize user input  using (- min/max)
+normalize_input <- function(user_Data) {
+  bed = (user_Data[1,1]-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))
+  bath = (user_Data[1,2]-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath))
+  house_size = (user_Data[1,3]-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size))
+  nor_User_data <- data.frame(bed, bath, house_size)
+  return(nor_User_data)
+}
+#Normalising the user data 
+nor_User_data <- normalize_input(user_data)
 ```
+
+
 
 
 ```{r Using a function}
-predict_func <- function(user_data) {
-  predict(linear_model_fit, user_data)
+##Function that takes in dataframe of normalized user data and gives out the output
+predict_lm <- function(nor_User_data, linear_model_fit1 = linear_model_fit2) {
+  if (class(linear_model_fit) != "lm"
+  ) stop("This function needs an LM model")
+  predict(linear_model_fit2, nor_User_data)
 }
-predict_func
-
 ```
 
 ```{r}
-pricelm = predict_func(user_data)
-pricelm
+unscale_price <- function(price) {
+  price*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+}
 ```
 
 
+
+
 ```{r}
-nn <- neuralnet(price~bed+bath+acre_lot+house_size,data=train_data,hidden=1, threshold=0.00001,linear.output=TRUE)
+neuralmodel <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=2, threshold=0.01,act.fct=relu, rep=1, linear.output=TRUE)
             
 ```
 
-```{r}
-plot(nn)
 
-```
+COPY THIS
 
 
 ```{r}
-#testy <- test_data2 %>%
- # select(-c("price"))
+save(neuralmodel, file ="./neuralmodel3.RData")
+```
+
+```{r}
+load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/neuralmodel3.RData")
+```
+
+
+```{r}
+plot(neuralmodel)
+```
+
+
+```{r}
+PriceModel1 <- function(nor_User_data) {
+  
+  predict(neuralmodel, nor_User_data)
+}
+```
+
+
+
+
+
+```{r}
+predict_Price <- function(user_data) {
+  nor_User_data <- normalize_input(user_data)
+  lm_price <- predict_lm(nor_User_data)
+  nn_price <- PriceModel1(nor_User_data)
+  lm_pricefinal <- unscale_price(lm_price)
+  nn_pricefinal <- unscale_price(nn_price)
+  
+  prices <- data.frame(nn_pricefinal, lm_pricefinal)
+  return(prices)
+ 
+}
+```
+
+```{r FinalCode}
+{
+    bed = as.numeric(readline("Enter bed : "));
+    bath = as.numeric(readline("Enter bath : "));
+    house_size = as.numeric(readline("Enter house_size: "));
+    user_data = data.frame(bed, bath, house_size)
+}
+predict_Price(user_data)
 ```
 
 
 
 ```{r}
-price2 <- predict(nn,user_data)
+predict_Price(user_data)
+```
 
-d <- price2[1]  
-d
+ANALYSIS OF TEST DATA PREDICTED PRICE VS ACTUAL PRICE
+
+```{r}
+test_data2 <- test_data %>% 
+  select(-c(price))
+
+test_data3 = test_data2[1:10000, ]
+ 
+
+test_data3price <- PriceModel1(test_data3)
+
+final_test = as.data.frame(test_data3price)
+final_test
+```
+
+
+
+```{r}
+test_dataprice<- test_data %>%
+  select(price)
+
+#test_dataprice
+
+test_dataprice1 = head(test_dataprice,10000)
+test_dataprice1[1]
+```
+
+
+
+```{r}
+everything <-cbind(final_test, test_dataprice1)
+#everything
+
+
+names(everything)[1] = "predictedprice"
+  
+everything
 ```
 
 ```{r}
-unscaled_price1 <- d*(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))+min(cleaned_realtordata$price)
-
-
-unscaled_price
-
-unscaled_price2 <- d*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+everything |> ggplot(aes(x =price, y = predictedprice))+ geom_point() + 
+  geom_smooth(method = 'lm')
 
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-
-
-
-
-```{r cars}
-summary(cars)
+```{r}
+save(everything, file= "tests2.RData")
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -8,7 +8,7 @@
 #' @import neuralnet
 
 library(neuralnet)
-load("C:/RealHomePrice/data/neuralmodel3.Rda")
+load("../RealHomePrice/data/neuralmodel3.Rda")
 
 predict_nn <- function(x) {
   predict(neuralmodel, x)

@@ -6,7 +6,7 @@
 #'
 #' @export
 
-load("C:/RealHomePrice/data/train_data.rdata")
+load("../RealHomePrice/data/train_data.rdata")
 
 linear_model_fit <- lm(price~bed+bath+house_size, data =train_data )
 summary(linear_model_fit)

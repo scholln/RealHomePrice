@@ -72,6 +72,7 @@ test_data <- subset(normalized_data3, sample == FALSE)
 
 
 
+
 ```{r Getting Linear model setup}
 linear_model_fit <- lm(price~bed+bath+house_size, data =train_data )
 #quick summary of our model
@@ -111,10 +112,12 @@ unscale_price <- function(price) {
 ```
 
 ```{r}
-pricelm <- predict_lm(nor_User_data)
-pricelm
+
+#nor_User_data <- normalize_input(user_data)
+#pricelm <- predict_lm(nor_User_data)
+#pricelm
 #unscaling linear model price prediction
-unscaled_price <- unscale_price(pricelm)
+#unscaled_price <- unscale_price(pricelm)
 ```
 
 
@@ -155,6 +158,11 @@ predict_nn <- function(nor_User_data) {
 ```
 
 
+
+
+
+
+
 ```{r}
 predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)
@@ -170,15 +178,16 @@ predict_Price <- function(user_data) {
 ```
 
 ```{r FinalCode}
-{
+{   
+  
     bed = as.numeric(readline("Enter bed : "));
     bath = as.numeric(readline("Enter bath : "));
     house_size = as.numeric(readline("Enter house_size: "));
-    user_data = data.frame(bed, bath, house_size)
+    
 }
+user_data = data.frame(bed, bath, house_size)
 
 ```
-
 
 
 ```{r}

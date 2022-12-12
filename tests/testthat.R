@@ -9,4 +9,5 @@
 library(testthat)
 library(RealHomePrice)
 
+
 test_check("RealHomePrice")

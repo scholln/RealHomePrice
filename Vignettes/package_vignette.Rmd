@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the RealHome Price package"
+title: "Introduction to the RealHomePrice package"
 author: "Nicholas scholl,Russel Marvin, Bipin Parajuli, Moreen Owino"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 #library(RealHomePrice)
+library(ggplot2)
 ```
 
 
@@ -73,19 +74,35 @@ The package starts by taking input from the user by asking them to key in values
 ```{r}
 
 {
-    bed = as.numeric(readline("Enter bed : "));
-    bath = as.numeric(readline("Enter bath : "));
-    house_size = as.numeric(readline("Enter house_size: "));
+    #bed = as.numeric(readline("Enter bed : "));
+    #bath = as.numeric(readline("Enter bath : "));
+    #house_size = as.numeric(readline("Enter house_size: "));
 }
-user_data = data.frame(bed, bath, house_size)
-user_data
+#user_data = data.frame(bed, bath, house_size)
+#user_data
 ```
+
+
+```{r}
+
+bed = 3
+bath = 2
+house_size = 1000
+
+user_data = data.frame(bed, bath, house_size)
+
+user_data
+
+
+```
+
+
 
 *normalize_input function*
 
 ```{r}
 
-load("C:/Users/MAURINE/Desktop/STA518/RealHomePrice/data/cleaned_realtordata.rdata")
+load("C:/RealHomePrice/data/cleaned_realtordata.rdata")
 
 normalize_input <- function(user_Data) {
 
@@ -110,6 +127,17 @@ nor_User_data
 *predict_lm function*
 
 The predict_lm function  uses the linear model that comes loaded in the package to predict the scaled house price based on the normalized user data(nor_user_data) obtained from the normalize_input function above.
+
+
+```{r}
+
+load("C:/RealHomePrice/data/Linear_model_fit.Rdata")
+
+
+```
+
+
+
 
 ```{r}
 
@@ -144,7 +172,7 @@ lm_price
 
 ```{r}
 predict_nn <- function(nor_User_data) {
-  load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/neuralmodel3.RData")
+  load("C:/RealHomePrice/data/neuralmodel3.RDa")
   predict(neuralmodel, nor_User_data)
 }
 
@@ -189,7 +217,7 @@ predict_Price(user_data)
 The neuralnetwork model can be plotted by loading in the neuralmodel3.RData file which contains the trained neuralmodel and using the plot function to plot the model
 
 ```{r}
-load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/data/neuralmodel3.Rda")
+load("C:/RealHomePrice/data/neuralmodel3.Rda")
 
 plot(neuralmodel)
 
@@ -201,7 +229,7 @@ The plot above shows that the model used two hidden layers and had a low error  
 
 The package comes loaded with the tests2.RData data set that contains actual prices and predicted prices data that can be loaded using the load function and  plotted using ggplot to get an idea of the model efficiency as shown below:
 ```{r}
-load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/tests2.RData")
+load("C:/RealHomePrice/data/tests2.RData")
 ```
 
 ```{r}
@@ -221,8 +249,8 @@ There might be a slight difference between actual and predicted prices due to ot
 First we load the required data sets that were obtained from running the test data
 
 ```{r}
-load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/nn_model_test.RData")
-load("C:/Users/MAURINE/Desktop/STA 518/RealHomePrice/lm_model_test.RData")
+load("C:/RealHomePrice/data/nn_model_test.RData")
+load("C:/RealHomePrice/data/lm_model_test.RData")
 ```
 
 

@@ -9,7 +9,13 @@ We use both a standard linear model and a neural net for advanced analysis for t
 
 ## How to install
 
+simply run the following code chunk:
 
+```
+install.packages("devtools")
+library(devtools)
+install_github("scholln/RealHomePrice")
+```
 
 ## Example code block
 

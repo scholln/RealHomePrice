@@ -8,11 +8,27 @@ date: "2022-11-12"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r}
+install.packages("caTools")
+install.packages('neuralnet')
+install.packages('sigmoid')
+```
+
 
 ```{r loading packages}
+
 library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(neuralnet)
+library(sigmoid)
+library(broom)
+library(caTools)
 ```
+
+## R Markdown
+
+
 ```{r}
 realtor_data <- read_csv("C:/Users/MAURINE/Desktop/CIS635/realtor-data.csv")
 ```
@@ -32,7 +48,178 @@ cleaned_realtordata
 ```
 
 
+```{r}
+#cleaned_realtordata
+#unscaled_data2<- as.data.frame(cleaned_realtordata)
+#sample1 <- sample.split(unscaled_data2$price, SplitRatio = 0.8)
+#train_data3 <- subset(unscaled_data2,sample == TRUE)
 
+
+normalize <- function(x, na.rm = TRUE) {
+    return((x- min(x)) /(max(x)-min(x)))
+}
+
+normalized_data = as.data.frame(lapply(cleaned_realtordata, normalize))
+
+
+#min <- apply(cleaned_realtordata, 2, -min/max)
+#max <- apply(cleaned_realtordata, 2, max)
+#Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+
+# using (-min/max-min)
+
+bed = (bed2-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed)-min(cleaned_realtordata$bed))
+
+bath = (bath2-min(cleaned_realtordata$bath))/(max(cleaned_realtordata$bath)-min(cleaned_realtordata$bath))
+
+acre_lot =(acre_lot2-min(cleaned_realtordata$acre_lot))/(max(cleaned_realtordata$acre_lot)-min(cleaned_realtordata$acre_lot))
+
+house_size = (house_size2-min(cleaned_realtordata$house_size))/(max(cleaned_realtordata$house_size)-min(cleaned_realtordata$house_size))
+
+price10 = (price8-min(cleaned_realtordata$price))/(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))
+
+
+
+```
+
+```{r Normalization and Splitting data}
+#min <- apply(cleaned_realtordata, 2, min)
+#max <- apply(cleaned_realtordata, 2, max)
+#Scaled_data <- as.data.frame(scale(cleaned_realtordata, center = min, scale = max - min))
+#set.seed(12)
+#sample <- sample.split(Scaled_data$price, SplitRatio = 0.8)
+#train_data <- subset(Scaled_data, sample == TRUE)
+#test_data <- subset(Scaled_data, sample == FALSE)
+```
+
+
+```{r train test for nn}
+set.seed(12)
+scaled_data2<- as.data.frame(scale(cleaned_realtordata))
+sample <- sample.split(scaled_data2$price, SplitRatio = 0.8)
+train_data1 <- subset(scaled_data2,sample == TRUE)
+test_data2 <- subset(scaled_data2,sample == FALSE)
+
+```
+
+
+
+```{r Getting Linear model setup}
+#linear_model_fit <- lm(price~bed+bath+acre_lot+house_size, data =train_data3 )
+#quick summary of our model
+#summary(linear_model_fit)
+#using tidy() to create a tibble of coefficients to use for neural network weights later
+#weights_table <- tidy(linear_model_fit)
+#user_data = data.frame(bed, bath, acre_lot, house_size)
+```
+
+
+```{r User input}
+{
+    bed2 = as.numeric(readline("Enter bed : "));
+    bath2 = as.numeric(readline("Enter bath : "));
+    acre_lot2 = as.numeric(readline("Enter acre_lot : "));
+    house_size2 = as.numeric(readline("Enter house_size: "));
+    price8 = as.numeric(readline("Enter price: "));
+}
+
+bed = (bed2- mean(cleaned_realtordata$bed))/sd(cleaned_realtordata$bed)
+
+bath = (bath2- mean(cleaned_realtordata$bath))/sd(cleaned_realtordata$bath)
+
+acre_lot =(acre_lot2 - mean(cleaned_realtordata$acre_lot))/sd(cleaned_realtordata$acre_lot)
+
+house_size = (house_size2- mean(cleaned_realtordata$house_size))/sd(cleaned_realtordata$house_size)
+
+price10 = (price8-mean(cleaned_realtordata$price))/sd(cleaned_realtordata$price)
+
+
+user_data = data.frame(bed, bath, acre_lot, house_size)
+
+user_data2 = data.frame(bed2, bath2, acre_lot2, house_size2)
+```
+
+
+```{r Using a function}
+#predict_func <- function(user_data2) {
+ # predict(linear_model_fit, user_data2)
+#}
+#predict_func
+
+```
+
+```{r}
+#price2 = predict_func(user_data2)
+#price2
+```
+
+
+```{r}
+nn <- neuralnet(price~bed+bath+acre_lot+house_size,data=train_data1, hidden=3, threshold=0.01,linear.output=TRUE)
+            
+```
+
+```{r}
+plot(nn)
+
+```
+
+
+```{r}
+testy <- test_data2 %>%
+  select(-c("price"))
+```
+
+
+
+```{r}
+price2 <- predict(nn,user_data)
+
+d <- price2[1]  
+d
+```
+
+```{r}
+unscaled_G <- (d * sd(cleaned_realtordata$price)) + (mean(cleaned_realtordata$price)) 
+
+
+unscaled_G
+```
+
+
+
+
+
+```{r}
+
+unscaled_price1 <- d*(max(cleaned_realtordata$price)-min(cleaned_realtordata$price))+min(cleaned_realtordata$price)
+
+```
+
+
+```{r}
+unscale(G,train_data2$price  )
+```
+
+
+```{r}
+install.packages('outliers')
+library(outliers)
+```
+
+
+```{r}
+z <-  sapply(cleaned_realtordata, rm.outlier(cleaned_realtordata,fill=TRUE))
+
+k <- as_tibble(z)
+```
+
+
+
+```{r}
+price2$net.result
+
+```
 
 
 

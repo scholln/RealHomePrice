@@ -1,4 +1,4 @@
-title: "Untitled"
+title: "RealHomePrice"
 output: html_document
 date: "2022-11-22"
 ---
@@ -37,6 +37,8 @@ load("C:/RealHomePrice/data/cleaned_realtordata.rdata")
 #realtor_data1 <- realtor_data %>%
   #select(c('price','bed','bath','house_size'))
 #realtor_data1
+
+#In our original run, we did this to clean up the realtor data
 ```
 
 ```{r  removing rows with null values}
@@ -71,7 +73,7 @@ test_data <- subset(normalized_data3, sample == FALSE)
 
 
 ```{r Getting Linear model setup}
-linear_model_fit <- lm(price~bed+bath+house_size, data =test_data )
+linear_model_fit <- lm(price~bed+bath+house_size, data =train_data )
 #quick summary of our model
 summary(linear_model_fit)
 #using tidy() to create a tibble of coefficients to use for neural network weights later
@@ -80,13 +82,7 @@ summary(linear_model_fit)
 ```
 
 
-```{r User input}
-{
-    bed = as.numeric(readline("Enter bed : "));
-    bath = as.numeric(readline("Enter bath : "));
-    house_size = as.numeric(readline("Enter house_size: "));
-}
-user_data = data.frame(bed, bath, house_size)
+```{r normalize function}
 #   Function to Normalize user input  using (- min/max)
 normalize_input <- function(user_Data) {
   bed = (user_Data[1,1]-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))
@@ -95,8 +91,6 @@ normalize_input <- function(user_Data) {
   nor_User_data <- data.frame(bed, bath, house_size)
   return(nor_User_data)
 }
-#Normalising the user data 
-nor_User_data <- normalize_input(user_data)
 ```
 
 
@@ -110,6 +104,7 @@ predict_lm <- function(nor_User_data, linear_model_fit1 = linear_model_fit) {
 ```
 
 ```{r}
+#Function to unscale the price
 unscale_price <- function(price) {
   price*(max(cleaned_realtordata$price))+min(cleaned_realtordata$price)
 }
@@ -127,40 +122,44 @@ unscaled_price <- unscale_price(pricelm)
 
 ```{r}
 
-PriceModel <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=2, threshold=0.01,act.fct=relu, rep=1, linear.output=TRUE)
+#neuralmodel3 <- neuralnet(price~bed+bath+house_size,data=train_data,hidden=2, threshold=0.01,act.fct=relu, rep=1, linear.output=TRUE)
+
+#This is how we saved the Neural model, this function takes a long time to load, so we put the data in a file in the data folder for ease of access for the user.
             
 ```
 
+```{r}
 
+#save(neuralmodel, file ="./neuralmodel3.RDa")
+#Saving the neural net that was created in the previous block
+```
+
+
+
+```{r}
+load("C:/RealHomePrice/data/neuralmodel3.Rda")
+```
 
 
 ```{r}
 #plotting
-plot(PriceModel)
-#predicting price
-price2 <- predict(nn,nor_User_data)
-d <- price2[1]  
-d
-#unscaling price
-unscaled_price <- unscale_price(pricelm)
+plot(neuralmodel)
+
 ```
 
-```{r}
-PriceModel1 <- function(nor_User_data) {
-  neural_net_fit
-  predict(neural_net_fit, nor_User_data)
+```{r Block to create the predict_nn function}
+#Creating the function to load in the neural net against the user data
+predict_nn <- function(nor_User_data) {
+  predict(neuralmodel, nor_User_data)
 }
 ```
-
-
-
 
 
 ```{r}
 predict_Price <- function(user_data) {
   nor_User_data <- normalize_input(user_data)
   lm_price <- predict_lm(nor_User_data)
-  nn_price <- PriceModel1(nor_User_data)
+  nn_price <- predict_nn(nor_User_data)
   lm_pricefinal <- unscale_price(lm_price)
   nn_pricefinal <- unscale_price(nn_price)
   
@@ -178,7 +177,6 @@ predict_Price <- function(user_data) {
     user_data = data.frame(bed, bath, house_size)
 }
 
-predict_Price(user_data)
 ```
 
 

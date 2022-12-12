@@ -1,5 +1,6 @@
 #' Function that predicts home price using linear model
 #'
+#'@name predict_lm
 #' @param x Normalized user data in a dataframe, numeric values
 #' @returns unscaled predicted price
 #'

@@ -3,9 +3,6 @@
 \name{predict_lm}
 \alias{predict_lm}
 \title{Function that predicts home price using linear model}
-\usage{
-predict_lm(x)
-}
 \arguments{
 \item{x}{Normalized user data in a dataframe, numeric values}
 }

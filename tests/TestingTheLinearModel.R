@@ -1,3 +1,7 @@
+library(testthat)
+
+
+
 testthat::test_that("Testing linear model", {
 
   bedtest1 = 3

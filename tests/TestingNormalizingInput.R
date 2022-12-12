@@ -1,3 +1,6 @@
+library(testthat)
+
+
 testthat::test_that("Testing linear model", {
 
 

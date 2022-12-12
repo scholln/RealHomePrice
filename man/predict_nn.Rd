@@ -3,9 +3,6 @@
 \name{predict_nn}
 \alias{predict_nn}
 \title{Function that predicts home price using neural net}
-\usage{
-predict_nn(x)
-}
 \arguments{
 \item{x}{Normalized user data in a dataframe}
 }

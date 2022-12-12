@@ -1,0 +1,17 @@
+Package: RealHomePrice
+Title: Predicting Home Price 
+Version: 0.0.0.9000
+Authors@R: 
+    person("Russell", "Marvin", , "marvinru@mail.gvsu.edu", role = c("aut", "cre"))
+    person("Moreen", "Owino", , "owinom@mail.gvsu.edu", role = c("aut", "cre"))
+    person("Bipin", "Parajuli", , "parajubi@mail.gvsu.edu", role = c("aut", "cre"))
+    person("Nicholas", "Scholl", , "scholln@mail.gvsu.edu", role = c("aut", "cre"))
+Description: This package will use a multiple linear regression model and a neural net to predict your home price. It uses data from https://www.kaggle.com/datasets/ahmedshahriarsakib/usa-real-estate-dataset to train these models. The predict_Price function takes in a dataframe of your input values (bed, bath, house_size) and returns a predicted price to serveas a reference point for your home price. 
+License: use_gpl_lisence()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Imports: neuralnet

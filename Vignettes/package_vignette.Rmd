@@ -12,8 +12,11 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 5,
+  fig.height = 3
 )
+
 #library(RealHomePrice)
 library(ggplot2)
 ```
@@ -208,11 +211,11 @@ The predict_price function in use as shown below:
 
 ```{r}
 {
-    bed = as.numeric(readline("Enter bed : "));
-    bath = as.numeric(readline("Enter bath : "));
+    #bed = as.numeric(readline("Enter bed : "));
+    #bath = as.numeric(readline("Enter bath : "));
     house_size = as.numeric(readline("Enter house_size: "));
 }
-user_data = data.frame(bed, bath, house_size)
+#user_data = data.frame(bed, bath, house_size)
 predict_Price(user_data)
 ```
 *Plotting the neural net model*
@@ -222,9 +225,17 @@ The neuralnetwork model can be plotted by loading in the neuralmodel3.RData file
 ```{r}
 load("C:/RealHomePrice/data/neuralmodel3.Rda")
 
-plot(neuralmodel)
 
 ```
+
+```{r}
+
+plot(neuralmodel, rep = "best")
+
+```
+
+
+
 The plot above shows that the model used two hidden layers and had a low error  value of 0.059695 showing that the model had a relatively good performance on the data set since acceptable error values are usually between 0 and 1.
 
 
@@ -257,7 +268,7 @@ load("C:/RealHomePrice/data/lm_model_test.RData")
 ```
 
 
-```{r}
+```{r fig.height=3, fig.width=6}
 par(mfrow=c(1,2),mar=c(1, 4, 1, 1) + 0.1)
 plot(nn_model_test$Actualprice,nn_model_test$nn_predictedprice,col='red',main='Real vs predicted NN',pch=18,cex=0.7)
 abline(0,1,lwd=2)
@@ -265,7 +276,7 @@ legend('bottomright',legend='NN',pch=18,col='red', bty='n')
 plot(lm_model_test$Actualprice,lm_model_test$lm_predictedprices,col='blue',main='Real vs predicted lm',pch=18, cex=0.7)
 abline(0,1,lwd=2)
 legend('bottomright',legend='LM',pch=18,col='blue', bty='n', cex=.95)
-par(mfrow=c(1,2),mar=c(1, 4, 1, 1) + 0.1)
+
 
 ```
 Again the plots show that most of the predicted prices can be found close to the best fit line and this shows that the models can be used to predict the house prices.

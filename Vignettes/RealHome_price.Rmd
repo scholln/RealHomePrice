@@ -30,7 +30,7 @@ library(usethis)
 
 
 ```{r} 
-load("../RealHomePrice/data/cleaned_realtordata.rdata")
+load("C:/RealHomePrice/data/cleaned_realtordata.rdata")
 ```
 
 ```{r selecting required columns}
@@ -142,7 +142,7 @@ unscale_price <- function(price) {
 
 
 ```{r}
-load("../RealHomePrice/data/neuralmodel3.Rda")
+load("C:/RealHomePrice/data/neuralmodel3.Rda")
 ```
 
 

@@ -1,5 +1,7 @@
 #' Function that normalizes the userinput using -min/max
 #'
+#'@name normalize_input
+#'
 #' @param x  user data in a dataframe, numeric values
 #' @returns dataframe of normalized user input
 #'

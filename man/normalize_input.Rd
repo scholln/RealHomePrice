@@ -3,9 +3,6 @@
 \name{normalize_input}
 \alias{normalize_input}
 \title{Function that normalizes the userinput using -min/max}
-\usage{
-normalize_input(x)
-}
 \arguments{
 \item{x}{user data in a dataframe, numeric values}
 }

@@ -1,5 +1,5 @@
 # RealHomePrice 
-https://scholln.github.io/RealHomePrice/
+
 
 `RealHomePrice` is a tool for homeowners and those looking to get into the housing market.  This package is aimed at providing accurate home pricing information to those at the consumer level without access to information that a real estate agent would have or a housing broker. The factors needed for the assessment are the following: 
 * number of bedrooms in the home
@@ -33,5 +33,4 @@ normalize_input <- function(user_Data) {
 }
 ```
 ## Link to package Vignette
-https://github.com/scholln/RealHomePrice/blob/main/Vignettes/package_vignette.Rmd
-
+https://scholln.github.io/RealHomePrice/

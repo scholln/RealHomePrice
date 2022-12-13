@@ -2,9 +2,9 @@
 #'
 #' @param x  user data in a dataframe, numeric values
 #' @returns dataframe of normalized user input
-#' 
+#'
 #' @export
-
+load("../RealHomePrice/data/cleaned_realtordata.rdata")
 
 normalize_input <- function(x) {
   bed = (x[1,1]-min(cleaned_realtordata$bed))/(max(cleaned_realtordata$bed))

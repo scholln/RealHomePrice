@@ -59,6 +59,8 @@ The package comes with a pre loaded neural net model obtained from training usin
 
 The package can be installed by running the following codes
 
+
+
 ```{r}
 
 #install.packages("RealHomePrice")
@@ -71,7 +73,17 @@ The package starts by taking input from the user by asking them to key in values
 
 *Taking user input*
 
+```{r Example}
+{   
+  
+    #bed = as.numeric(readline("Enter bed : "));
+    #bath = as.numeric(readline("Enter bath : "));
+    #house_size = as.numeric(readline("Enter house_size: "));
+    
+}
+#user_data = data.frame(bed, bath, house_size)
 
+```
 
 
 ```{r}

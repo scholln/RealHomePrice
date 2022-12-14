@@ -33,4 +33,4 @@ normalize_input <- function(user_Data) {
 }
 ```
 ## Link to package Vignette
-https://scholln.github.io/RealHomePrice/
+https://rpubs.com/NickScholl/983470
